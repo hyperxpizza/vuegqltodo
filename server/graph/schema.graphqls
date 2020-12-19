@@ -1,0 +1,39 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Contact {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input NewContact {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+}
+
+input UpdateContact {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+}
+
+
+type Mutation {
+  createContact(input: NewContact!): Contact!
+  updateContact(input: UpdateContact!): Contact!
+  deleteContact(id: ID!): Int!
+}
+
+type Query {
+  getAllContacts: [Contact!]!
+}
