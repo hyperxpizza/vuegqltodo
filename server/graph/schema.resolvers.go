@@ -7,15 +7,35 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hyperxpizza/vuegqltodo/server/database"
 	"github.com/hyperxpizza/vuegqltodo/server/graph/generated"
 	"github.com/hyperxpizza/vuegqltodo/server/graph/model"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+func (r *mutationResolver) CreateContact(ctx context.Context, input model.NewContact) (*model.Contact, error) {
+	/* validate
+	if helpers.ValidateContact(input) != true {
+		return nil, fmt.Errorf("error while validating contact")
+	}
+	*/
+
+	contact, err := database.InsertContact(input)
+	if err != nil {
+		return nil, err
+	}
+
+	return contact, nil
+}
+
+func (r *mutationResolver) UpdateContact(ctx context.Context, input model.UpdateContact) (*model.Contact, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
+func (r *mutationResolver) DeleteContact(ctx context.Context, id string) (int, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) GetAllContacts(ctx context.Context) ([]*model.Contact, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

@@ -2,14 +2,16 @@
 #
 # https://gqlgen.com/getting-started/
 
+scalar Timestamp
+
 type Contact {
   id: ID!
   firstName: String!
   lastName: String!
   email: String!
   phone: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
 }
 
 input NewContact {
