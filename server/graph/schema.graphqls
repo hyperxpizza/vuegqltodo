@@ -5,7 +5,7 @@
 scalar Timestamp
 
 type Contact {
-  id: ID!
+  id: Int!
   firstName: String!
   lastName: String!
   email: String!
@@ -22,20 +22,19 @@ input NewContact {
 }
 
 input UpdateContact {
-  id: ID!
+  id: Int!
   firstName: String!
   lastName: String!
   email: String!
   phone: String!
 }
 
+type Query {
+  getAllContacts: [Contact!]!
+}
 
 type Mutation {
   createContact(input: NewContact!): Contact!
   updateContact(input: UpdateContact!): Contact!
-  deleteContact(id: ID!): Int!
-}
-
-type Query {
-  getAllContacts: [Contact!]!
+  deleteContact(id: Int!): Int!
 }

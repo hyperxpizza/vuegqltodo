@@ -9,3 +9,6 @@ CREATE TABLE contacts (
     createdAt TIMESTAMP NOT NULL,
     updatedAt TIMESTAMP NOT NULL
 );
+
+GRANT ALL PRIVILEGES ON TABLE contacts TO user;
+GRANT USAGE, SELECT ON SEQUENCE contacts_id_seq TO user;

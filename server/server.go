@@ -7,7 +7,6 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/hyperxpizza/vuegqltodo/server/database"
 	"github.com/hyperxpizza/vuegqltodo/server/graph"
 	"github.com/hyperxpizza/vuegqltodo/server/graph/generated"
 )
@@ -19,8 +18,6 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-
-	database.InitDB("pizza", "Wojtekfoka1", "vuegqltodo")
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 

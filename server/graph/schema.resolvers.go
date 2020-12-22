@@ -7,31 +7,19 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hyperxpizza/vuegqltodo/server/database"
 	"github.com/hyperxpizza/vuegqltodo/server/graph/generated"
 	"github.com/hyperxpizza/vuegqltodo/server/graph/model"
 )
 
 func (r *mutationResolver) CreateContact(ctx context.Context, input model.NewContact) (*model.Contact, error) {
-	/* validate
-	if helpers.ValidateContact(input) != true {
-		return nil, fmt.Errorf("error while validating contact")
-	}
-	*/
-
-	contact, err := database.InsertContact(input)
-	if err != nil {
-		return nil, err
-	}
-
-	return contact, nil
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *mutationResolver) UpdateContact(ctx context.Context, input model.UpdateContact) (*model.Contact, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) DeleteContact(ctx context.Context, id string) (int, error) {
+func (r *mutationResolver) DeleteContact(ctx context.Context, id int) (int, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -47,3 +35,10 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
