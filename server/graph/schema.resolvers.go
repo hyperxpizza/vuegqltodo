@@ -9,10 +9,20 @@ import (
 
 	"github.com/hyperxpizza/vuegqltodo/server/graph/generated"
 	"github.com/hyperxpizza/vuegqltodo/server/graph/model"
+	"github.com/hyperxpizza/vuegqltodo/server/helpers"
 )
 
 func (r *mutationResolver) CreateContact(ctx context.Context, input model.NewContact) (*model.Contact, error) {
 	//validate input
+	if helpers.ValidateContactInput(input) == false {
+		return nil, fmt.Errorf("Error while walidating input")
+	}
+
+	//validate email
+	err := helpers.ValidateEmail(input.Email)
+	if err != nil {
+		return nil, err
+	}
 }
 
 func (r *mutationResolver) UpdateContact(ctx context.Context, input model.UpdateContact) (*model.Contact, error) {
