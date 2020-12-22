@@ -12,7 +12,7 @@ import (
 )
 
 func (r *mutationResolver) CreateContact(ctx context.Context, input model.NewContact) (*model.Contact, error) {
-	panic(fmt.Errorf("not implemented"))
+	//validate input
 }
 
 func (r *mutationResolver) UpdateContact(ctx context.Context, input model.UpdateContact) (*model.Contact, error) {

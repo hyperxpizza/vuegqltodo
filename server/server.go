@@ -3,21 +3,28 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/hyperxpizza/vuegqltodo/server/database"
 	"github.com/hyperxpizza/vuegqltodo/server/graph"
 	"github.com/hyperxpizza/vuegqltodo/server/graph/generated"
+	"github.com/hyperxpizza/vuegqltodo/server/helpers"
 )
 
 const defaultPort = "8080"
 
 func main() {
-	port := os.Getenv("PORT")
+	databaseName := helpers.GoDotEnvVariable("DBNAME")
+	databaseUser := helpers.GoDotEnvVariable("DBUSER")
+	databasePassword := helpers.GoDotEnvVariable("DBPASSWORD")
+
+	port := helpers.GoDotEnvVariable("PORT")
 	if port == "" {
 		port = defaultPort
 	}
+
+	database.InitDB(databaseUser, databasePassword, databaseName)
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
