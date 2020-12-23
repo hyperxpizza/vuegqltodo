@@ -140,3 +140,35 @@ func CheckIfContactExists(id int) bool {
 		return true
 	}
 }
+
+func UpdateContact(input model.UpdateContact) (*model.Contact, error) {
+	// check if contact with given id exists
+	if CheckIfContactExists(input.ID) != true {
+		return nil, fmt.Errorf("Contact with given id does not exists")
+	}
+
+	stmt, err := db.Prepare(`UPDATE contacts SET firstName = $1, lastName = $2, email = $3, phone = $4, updatedAt = $5 WHERE id = $6 RETURNING createdAt;`)
+	if err != nil {
+		return nil, err
+	}
+
+	var createdAt time.Time
+	currentTime := time.Now()
+
+	err = stmt.QueryRow(input.FirstName, input.LastName, input.Email, input.Phone, currentTime, input.ID).Scan(&createdAt)
+	if err != nil {
+		return nil, err
+	}
+
+	contact := model.Contact{
+		ID:        input.ID,
+		FirstName: input.FirstName,
+		LastName:  input.LastName,
+		Email:     input.Email,
+		Phone:     input.Phone,
+		CreatedAt: createdAt,
+		UpdatedAt: currentTime,
+	}
+
+	return &contact, nil
+}

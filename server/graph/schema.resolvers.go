@@ -35,7 +35,12 @@ func (r *mutationResolver) CreateContact(ctx context.Context, input model.NewCon
 }
 
 func (r *mutationResolver) UpdateContact(ctx context.Context, input model.UpdateContact) (*model.Contact, error) {
-	panic(fmt.Errorf("not implemented"))
+	contact, err := database.UpdateContact(input)
+	if err != nil {
+		return nil, err
+	}
+
+	return contact, nil
 }
 
 func (r *mutationResolver) DeleteContact(ctx context.Context, id int) (*model.DeleteResponse, error) {
