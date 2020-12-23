@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hyperxpizza/vuegqltodo/server/database"
 	"github.com/hyperxpizza/vuegqltodo/server/graph/generated"
 	"github.com/hyperxpizza/vuegqltodo/server/graph/model"
 	"github.com/hyperxpizza/vuegqltodo/server/helpers"
@@ -23,6 +24,14 @@ func (r *mutationResolver) CreateContact(ctx context.Context, input model.NewCon
 	if err != nil {
 		return nil, err
 	}
+
+	//insert
+	contact, err := database.InsertContact(input)
+	if err != nil {
+		return nil, err
+	}
+
+	return contact, nil
 }
 
 func (r *mutationResolver) UpdateContact(ctx context.Context, input model.UpdateContact) (*model.Contact, error) {
