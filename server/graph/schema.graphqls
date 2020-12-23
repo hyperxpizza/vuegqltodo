@@ -29,12 +29,16 @@ input UpdateContact {
   phone: String!
 }
 
+type DeleteResponse{
+  rowsAffected: Int!
+}
+
 type Query {
-  getAllContacts: [Contact!]!
+  getAllContacts: [Contact]!
 }
 
 type Mutation {
   createContact(input: NewContact!): Contact!
   updateContact(input: UpdateContact!): Contact!
-  deleteContact(id: Int!): Int!
+  deleteContact(id: Int!): DeleteResponse!
 }

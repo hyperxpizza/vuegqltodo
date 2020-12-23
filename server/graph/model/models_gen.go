@@ -16,6 +16,10 @@ type Contact struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
+type DeleteResponse struct {
+	RowsAffected int `json:"rowsAffected"`
+}
+
 type NewContact struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`

@@ -68,3 +68,75 @@ func InsertContact(input model.NewContact) (*model.Contact, error) {
 	return &contact, nil
 
 }
+
+func GetAllContacts() ([]*model.Contact, error) {
+
+	var contacts []*model.Contact
+
+	rows, err := db.Query(`SELECT * FROM contacts`)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var contact model.Contact
+
+		err = rows.Scan(
+			&contact.ID,
+			&contact.FirstName,
+			&contact.LastName,
+			&contact.Email,
+			&contact.Phone,
+			&contact.CreatedAt,
+			&contact.UpdatedAt,
+		)
+		if err != nil {
+			log.Println("error 3")
+			return nil, err
+		}
+
+		contacts = append(contacts, &contact)
+	}
+
+	return contacts, nil
+}
+
+func DeleteContactByID(id int) (*int, error) {
+	// check if contact with given id exists
+	if CheckIfContactExists(id) != true {
+		return nil, fmt.Errorf("Contact with given id does not exists")
+	}
+	stmt, err := db.Prepare(`DELETE FROM contacts WHERE id = $1;`)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := stmt.Exec(id)
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffected1, err := result.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffected2 := int(rowsAffected1)
+
+	return &rowsAffected2, nil
+}
+
+func CheckIfContactExists(id int) bool {
+	err := db.QueryRow(`SELECT id FROM contacts WHERE id = $1`, id).Scan(&id)
+	switch {
+	case err == sql.ErrNoRows:
+		return false
+	case err != nil:
+		log.Fatal(err)
+		return false
+	default:
+		return true
+	}
+}

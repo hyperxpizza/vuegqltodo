@@ -55,6 +55,10 @@ type ComplexityRoot struct {
 		UpdatedAt func(childComplexity int) int
 	}
 
+	DeleteResponse struct {
+		RowsAffected func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateContact func(childComplexity int, input model.NewContact) int
 		DeleteContact func(childComplexity int, id int) int
@@ -69,7 +73,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateContact(ctx context.Context, input model.NewContact) (*model.Contact, error)
 	UpdateContact(ctx context.Context, input model.UpdateContact) (*model.Contact, error)
-	DeleteContact(ctx context.Context, id int) (int, error)
+	DeleteContact(ctx context.Context, id int) (*model.DeleteResponse, error)
 }
 type QueryResolver interface {
 	GetAllContacts(ctx context.Context) ([]*model.Contact, error)
@@ -138,6 +142,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Contact.UpdatedAt(childComplexity), true
+
+	case "DeleteResponse.rowsAffected":
+		if e.complexity.DeleteResponse.RowsAffected == nil {
+			break
+		}
+
+		return e.complexity.DeleteResponse.RowsAffected(childComplexity), true
 
 	case "Mutation.createContact":
 		if e.complexity.Mutation.CreateContact == nil {
@@ -277,14 +288,18 @@ input UpdateContact {
   phone: String!
 }
 
+type DeleteResponse{
+  rowsAffected: Int!
+}
+
 type Query {
-  getAllContacts: [Contact!]!
+  getAllContacts: [Contact]!
 }
 
 type Mutation {
   createContact(input: NewContact!): Contact!
   updateContact(input: UpdateContact!): Contact!
-  deleteContact(id: Int!): Int!
+  deleteContact(id: Int!): DeleteResponse!
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -636,6 +651,41 @@ func (ec *executionContext) _Contact_updatedAt(ctx context.Context, field graphq
 	return ec.marshalNTimestamp2timeᚐTime(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _DeleteResponse_rowsAffected(ctx context.Context, field graphql.CollectedField, obj *model.DeleteResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DeleteResponse",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RowsAffected, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createContact(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -757,9 +807,9 @@ func (ec *executionContext) _Mutation_deleteContact(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*model.DeleteResponse)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNDeleteResponse2ᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐDeleteResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAllContacts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -794,7 +844,7 @@ func (ec *executionContext) _Query_getAllContacts(ctx context.Context, field gra
 	}
 	res := resTmp.([]*model.Contact)
 	fc.Result = res
-	return ec.marshalNContact2ᚕᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐContactᚄ(ctx, field.Selections, res)
+	return ec.marshalNContact2ᚕᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐContact(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2116,6 +2166,33 @@ func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var deleteResponseImplementors = []string{"DeleteResponse"}
+
+func (ec *executionContext) _DeleteResponse(ctx context.Context, sel ast.SelectionSet, obj *model.DeleteResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeleteResponse")
+		case "rowsAffected":
+			out.Values[i] = ec._DeleteResponse_rowsAffected(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -2465,7 +2542,7 @@ func (ec *executionContext) marshalNContact2githubᚗcomᚋhyperxpizzaᚋvuegqlt
 	return ec._Contact(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNContact2ᚕᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐContactᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Contact) graphql.Marshaler {
+func (ec *executionContext) marshalNContact2ᚕᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐContact(ctx context.Context, sel ast.SelectionSet, v []*model.Contact) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2489,7 +2566,7 @@ func (ec *executionContext) marshalNContact2ᚕᚖgithubᚗcomᚋhyperxpizzaᚋv
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNContact2ᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐContact(ctx, sel, v[i])
+			ret[i] = ec.marshalOContact2ᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐContact(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2510,6 +2587,20 @@ func (ec *executionContext) marshalNContact2ᚖgithubᚗcomᚋhyperxpizzaᚋvueg
 		return graphql.Null
 	}
 	return ec._Contact(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDeleteResponse2githubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐDeleteResponse(ctx context.Context, sel ast.SelectionSet, v model.DeleteResponse) graphql.Marshaler {
+	return ec._DeleteResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeleteResponse2ᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐDeleteResponse(ctx context.Context, sel ast.SelectionSet, v *model.DeleteResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._DeleteResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
@@ -2818,6 +2909,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return graphql.MarshalBoolean(*v)
+}
+
+func (ec *executionContext) marshalOContact2ᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐContact(ctx context.Context, sel ast.SelectionSet, v *model.Contact) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Contact(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
