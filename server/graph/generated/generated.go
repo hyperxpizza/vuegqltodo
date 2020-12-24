@@ -66,7 +66,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetAllContacts func(childComplexity int) int
+		Contacts func(childComplexity int) int
 	}
 }
 
@@ -76,7 +76,7 @@ type MutationResolver interface {
 	DeleteContact(ctx context.Context, id int) (*model.DeleteResponse, error)
 }
 type QueryResolver interface {
-	GetAllContacts(ctx context.Context) ([]*model.Contact, error)
+	Contacts(ctx context.Context) ([]*model.Contact, error)
 }
 
 type executableSchema struct {
@@ -186,12 +186,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateContact(childComplexity, args["input"].(model.UpdateContact)), true
 
-	case "Query.getAllContacts":
-		if e.complexity.Query.GetAllContacts == nil {
+	case "Query.contacts":
+		if e.complexity.Query.Contacts == nil {
 			break
 		}
 
-		return e.complexity.Query.GetAllContacts(childComplexity), true
+		return e.complexity.Query.Contacts(childComplexity), true
 
 	}
 	return 0, false
@@ -293,7 +293,7 @@ type DeleteResponse{
 }
 
 type Query {
-  getAllContacts: [Contact]!
+  contacts: [Contact]!
 }
 
 type Mutation {
@@ -812,7 +812,7 @@ func (ec *executionContext) _Mutation_deleteContact(ctx context.Context, field g
 	return ec.marshalNDeleteResponse2ᚖgithubᚗcomᚋhyperxpizzaᚋvuegqltodoᚋserverᚋgraphᚋmodelᚐDeleteResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getAllContacts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_contacts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -830,7 +830,7 @@ func (ec *executionContext) _Query_getAllContacts(ctx context.Context, field gra
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAllContacts(rctx)
+		return ec.resolvers.Query().Contacts(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2249,7 +2249,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "getAllContacts":
+		case "contacts":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -2257,7 +2257,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getAllContacts(ctx, field)
+				res = ec._Query_contacts(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

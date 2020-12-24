@@ -34,7 +34,7 @@ type DeleteResponse{
 }
 
 type Query {
-  getAllContacts: [Contact]!
+  contacts: [Contact]!
 }
 
 type Mutation {
