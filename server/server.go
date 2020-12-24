@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/99designs/gqlgen/handler"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/hyperxpizza/vuegqltodo/server/database"
 	"github.com/hyperxpizza/vuegqltodo/server/graph"
@@ -36,7 +35,7 @@ func main() {
 
 	router := gin.Default()
 
-	router.Use(cors.Default())
+	router.Use(CORS())
 
 	router.POST("/query", graphqlHandler())
 	router.GET("/", playgroundHandler())
@@ -57,5 +56,20 @@ func playgroundHandler() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
+func CORS() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "*")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
 	}
 }
