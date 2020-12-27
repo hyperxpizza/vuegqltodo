@@ -1,25 +1,52 @@
 <template>
     <div id="table">
-        <table>
-            <caption>Vue GrapgQL TODO app with golang backend</caption>
-            <thead>
-                <tr>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Created at</th>
-                    <th scope="col">Updated at</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-        </table>
+      <table>
+        <caption>Vue GrapgQL TODO app with golang backend</caption>
+          <thead>
+            <tr>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Created at</th>
+              <th scope="col">Updated at</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="contact in contacts" :key="contact.id">
+              <td scope="row" data-label="First Name">{{contact.firstName}}</td>
+              <td data-label="Last Name">{{contact.lastName}}</td>
+              <td data-label="Email">{{contact.email}}</td>
+              <td data-label="Phone">{{contact.phone}}</td>
+              <td data-label="Created at">{{contact.createdAt}}</td>
+              <td data-label="Updated at">{{contact.updatedAt}}</td>
+              </tr>
+          </tbody>
+      </table>
     </div>
 </template>
 
 <script>
+import gql from 'graphql-tag';
+
 export default {
-    name: 'Table'
+    name: 'Table',
+    apollo: {
+      contacts: gql`
+        query {
+          contacts{
+            id
+            firstName
+            lastName
+            email
+            phone
+            createdAt
+            updatedAt
+        }
+      }  
+    `
+  }
 }
 </script>
 

@@ -1,41 +1,17 @@
 <template>
   <div id="app">
     <Table />
+    <AddContactForm />
   </div>
 </template>
 
 <script>
-import gql from 'graphql-tag';
 import Table from './components/Table.vue';
-
-/*
-export const CONTACTS = gql`
-  contacts{
-    id
-    firstName
-    lastName
-    email
-    phone
-  }
-`
-*/
+import AddContactForm from './components/AddContactForm.vue';
 
 export default {
-  components: { Table },
+  components: { Table, AddContactForm },
   name:"App",
-  apollo: {
-    contacts: gql`
-      query {
-        contacts{
-          id
-          firstName
-          lastName
-          email
-          phone
-        }
-      }  
-    `
-  }
 }
 </script>
 
