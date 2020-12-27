@@ -21,6 +21,10 @@
               <td data-label="Phone">{{contact.phone}}</td>
               <td data-label="Created at">{{contact.createdAt}}</td>
               <td data-label="Updated at">{{contact.updatedAt}}</td>
+              <td data-label="Actions">
+                <button class="actionButton" id="selectButton">Select</button>
+                <button class="actionButton" id="deleteButton">Delete</button>
+              </td>
               </tr>
           </tbody>
       </table>
@@ -80,6 +84,26 @@ table th {
   font-size: .85em;
   letter-spacing: .1em;
   text-transform: uppercase;
+}
+
+.actionButton{
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+}
+
+#selectButton{
+  background-color: #008CBA;
+  margin-right: 5px;
+}
+
+#deleteButton{
+  background-color: #f44336;
+  margin-left: 5px;
 }
 
 @media screen and (max-width: 600px) {
