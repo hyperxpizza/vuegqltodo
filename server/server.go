@@ -1,7 +1,10 @@
 package main
 
 import (
+	"os"
+
 	"github.com/99designs/gqlgen/handler"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/hyperxpizza/vuegqltodo/server/database"
 	"github.com/hyperxpizza/vuegqltodo/server/graph"
@@ -12,9 +15,9 @@ import (
 const defaultPort = "8080"
 
 func main() {
-	databaseName := helpers.GoDotEnvVariable("DBNAME")
-	databaseUser := helpers.GoDotEnvVariable("DBUSER")
-	databasePassword := helpers.GoDotEnvVariable("DBPASSWORD")
+	databaseName := os.Getenv("POSTGRES_DB")
+	databaseUser := os.Getenv("POSTGRES_USER")
+	databasePassword := helpers.GoDotEnvVariable("POSTGRES_PASSWORD")
 
 	port := helpers.GoDotEnvVariable("PORT")
 	if port == "" {
@@ -23,19 +26,15 @@ func main() {
 
 	database.InitDB(databaseUser, databasePassword, databaseName)
 
-	/*
-		srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
-
-		http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-		http.Handle("/query", srv)
-
-		log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-		log.Fatal(http.ListenAndServe(":"+port, nil))
-	*/
-
 	router := gin.Default()
 
-	router.Use(CORS())
+	//router.Use(CORS())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:  []string{"http://localhost:8080"},
+		AllowMethods:  []string{"OPTIONS", "POST", "GET", "PUT"},
+		AllowHeaders:  []string{"*"},
+		ExposeHeaders: []string{"Content-Length"},
+	}))
 
 	router.POST("/query", graphqlHandler())
 	router.GET("/", playgroundHandler())
@@ -56,20 +55,5 @@ func playgroundHandler() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
-	}
-}
-
-func CORS() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "*")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
 	}
 }

@@ -1,0 +1,21 @@
+version: '3'
+services: 
+  database:
+    image: postgres:10-alpine
+    restart: always
+    ports:
+      - "5433:5433"
+    environment: 
+      - POSTGRES_PASSWORD=secret_password
+      - POSTGRES_USER=hyperxpizza
+      - POSTGRES_DB=vueqgltodo
+    volumes: 
+      - database-data:/var/lib/postgresql/data/
+  #server:
+  #  build: ./server
+  #  ports:
+  #    - "8888:8888"
+  #  env_file: 
+  #    - database.env
+volumes:
+  database-data:
