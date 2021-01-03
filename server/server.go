@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-
 	"github.com/99designs/gqlgen/handler"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -12,12 +10,12 @@ import (
 	"github.com/hyperxpizza/vuegqltodo/server/helpers"
 )
 
-const defaultPort = "8080"
+const defaultPort = "8888"
 
 func main() {
-	databaseName := os.Getenv("POSTGRES_DB")
-	databaseUser := os.Getenv("POSTGRES_USER")
-	databasePassword := helpers.GoDotEnvVariable("POSTGRES_PASSWORD")
+	databaseUser := "hyperxpizza"
+	databasePassword := "secret_password"
+	databaseName := "vuegqltodo"
 
 	port := helpers.GoDotEnvVariable("PORT")
 	if port == "" {
@@ -37,7 +35,7 @@ func main() {
 	}))
 
 	router.POST("/query", graphqlHandler())
-	router.GET("/", playgroundHandler())
+	//router.GET("/", playgroundHandler())
 
 	router.Run(":" + port)
 }

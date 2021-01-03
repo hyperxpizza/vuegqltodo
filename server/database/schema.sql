@@ -10,5 +10,5 @@ CREATE TABLE contacts (
     updatedAt TIMESTAMP NOT NULL
 );
 
-GRANT ALL PRIVILEGES ON TABLE contacts TO user;
-GRANT USAGE, SELECT ON SEQUENCE contacts_id_seq TO user;
+GRANT ALL PRIVILEGES ON TABLE contacts TO hyperxpizza;
+GRANT USAGE, SELECT ON SEQUENCE contacts_id_seq TO hyperxpizza;

@@ -4,18 +4,34 @@ services:
     image: postgres:10-alpine
     restart: always
     ports:
-      - "5433:5433"
+      - "5432:5432"
     environment: 
       - POSTGRES_PASSWORD=secret_password
       - POSTGRES_USER=hyperxpizza
       - POSTGRES_DB=vueqgltodo
     volumes: 
       - database-data:/var/lib/postgresql/data/
-  #server:
-  #  build: ./server
-  #  ports:
-  #    - "8888:8888"
-  #  env_file: 
-  #    - database.env
+    networks: 
+      - default
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    env_file: 
+      - database.env
+    depends_on: 
+      - database
+    networks: 
+      - default
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    depends_on: 
+      - server
+    ports:
+      - "8080:8080"
 volumes:
   database-data:

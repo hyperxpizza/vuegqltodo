@@ -20,9 +20,11 @@ const (
 
 func InitDB(user, password, dbname string) {
 
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+	//psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+	//	"password=%s dbname=%s sslmode=disable",
+	//	host, 5432, user, password, dbname)
+
+	psqlInfo := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable", user, password, host, port, dbname)
 
 	log.Println(psqlInfo)
 
